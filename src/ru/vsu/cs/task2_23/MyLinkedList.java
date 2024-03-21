@@ -150,29 +150,51 @@ public class MyLinkedList<T> implements Iterable<T> {
     private void pushHead() {
         Random rnd = new Random();
 
-        int randomIndex = rnd.nextInt(1, size());
-        Node<T> curRandom = getNode(randomIndex);
+        int randomIndex = rnd.nextInt(size() - 1) + 1;
         Node<T> prevRandom = getNode(randomIndex - 1);
-
-        if (randomIndex == 1) { //Если элемент следующий:
-            head.setNext(curRandom.getNext());
-            curRandom.setNext(head);
-        } else if (randomIndex == size() - 1) { //Если рандомный элемент - хвост:
-            curRandom.setNext(head.getNext());
-            prevRandom.setNext(head);
-            head.setNext(null);
-            tail = head;
-        } else { //Если элемент не следующий и не хвост
-            prevRandom.setNext(curRandom.getNext());
-            curRandom.setNext(head.getNext());
-            head.setNext(prevRandom.getNext());
-            prevRandom.setNext(head);
+        Node<T> curRandom = prevRandom.getNext();
+        Node<T> newHead, newTail;
+        if (size() < 2) {
+            return;
+        } else if (size() == 2) {
+            boolean change = rnd.nextInt(10) >= 5 ? true : false;
+            if (change) {
+                tail.setNext(head);
+                head.setNext(null);
+                newHead = tail;
+                tail = head;
+                head = newHead;
+            } else {
+                return;
+            }
+        } else {
+            if (randomIndex == 1) { //Если элемент следующий:
+                head.setNext(curRandom.getNext());
+                curRandom.setNext(head);
+            } else if (randomIndex == size() - 1) { //Если рандомный элемент - хвост:
+                curRandom.setNext(head.getNext());
+                prevRandom.setNext(head);
+                head.setNext(null);
+                tail = head;
+            } else { //Если элемент не следующий и не хвост
+                prevRandom.setNext(curRandom.getNext());
+                curRandom.setNext(head.getNext());
+                head.setNext(prevRandom.getNext());
+                prevRandom.setNext(head);
+            }
+            head = curRandom;
         }
-        head = curRandom;
+    }
+    public void pushElement(int index) {
+
     }
     public void mixRandomly() {
-        for (int i = 0; i < size() * 2; i++) {
-            pushHead();
+        Random rnd = new Random();
+
+        pushHead();
+
+        for (int i = 1; i < size() - 1; i++) {
+
         }
     }
 

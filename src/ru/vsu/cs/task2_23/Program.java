@@ -11,6 +11,7 @@ public class Program {
         list.addLast(3);
         list.addLast(4);
         list.addLast(5);
+
         System.out.println("Array: " + list.asString());
         list.mixRandomly();
         System.out.println("Array: " + list.asString());
