@@ -185,16 +185,33 @@ public class MyLinkedList<T> implements Iterable<T> {
             head = curRandom;
         }
     }
-    public void pushElement(int index) {
-
-    }
-    public void mixRandomly() {
+    private void pushElement(int position) {
         Random rnd = new Random();
 
+        int randomIndex = rnd.nextInt(size() - position) + position;
+
+        Node<T> prevRandom = getNode(randomIndex - 1);
+        Node<T> curRandom = prevRandom.getNext();
+        Node<T> prevNode = getNode(position);
+        Node<T> curNode = prevNode.getNext();
+
+        if (randomIndex == size() - 1) { //Если надо менять хвост:
+            tail.setNext(curNode.getNext());
+            prevNode.setNext(tail);
+            prevRandom.setNext(curNode);
+            curNode.setNext(null);
+            tail = curNode;
+        } else {
+            prevRandom.setNext(curRandom.getNext());
+            curRandom.setNext(curNode.getNext());
+            curNode.setNext(prevRandom.getNext());
+            prevRandom.setNext(curNode);
+        }
+    }
+    public void mixRandomly() {
         pushHead();
-
         for (int i = 1; i < size() - 1; i++) {
-
+            pushElement(i);
         }
     }
 
