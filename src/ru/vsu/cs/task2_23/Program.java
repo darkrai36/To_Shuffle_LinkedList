@@ -6,7 +6,7 @@ import java.util.Random;
 public class Program {
     public static void main(String[] args) {
         MyLinkedList<Integer> list = new MyLinkedList<>();
-        for (int i = 1; i <= 5000; i++) {
+        for (int i = 1; i <= 5; i++) {
             list.addLast(i);
         }
         System.out.println("Array: " + list.asString());

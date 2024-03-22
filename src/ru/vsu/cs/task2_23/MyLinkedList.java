@@ -53,6 +53,7 @@ public class MyLinkedList<T> implements Iterable<T> {
         head = n;
         size++;
     }
+
     public void addLast(T value) {
         if (isEmpty()) {
             addFirst(value);
@@ -75,6 +76,7 @@ public class MyLinkedList<T> implements Iterable<T> {
             q.setNext(n);
         }
     }
+
     public void removeFirst() {
         if (isEmpty()) {
             throw new NullPointerException("List is empty.");
@@ -82,15 +84,19 @@ public class MyLinkedList<T> implements Iterable<T> {
         head = head.getNext();
         size--;
     }
+
     public int size() {
         return size;
     }
+
     public boolean isEmpty() {
         return (size() == 0);
     }
+
     public T get(int index) {
         return getNode(index).getValue();
     }
+
     private Node<T> getNode(int index) {
         if (index < 0) {
             throw new IndexOutOfBoundsException("Index must be greater or equal 0");
@@ -147,99 +153,93 @@ public class MyLinkedList<T> implements Iterable<T> {
         }
     }*/
 
-    private void pushHead() {
-        Random rnd = new Random();
-
-        int randomIndex = rnd.nextInt(size() - 1) + 1;
-        Node<T> prevRandom = getNode(randomIndex - 1);
-        Node<T> curRandom = prevRandom.getNext();
-        Node<T> newHead, newTail;
-        if (size() < 2) {
+    private void pushHead(int newPosition) {
+        if (newPosition == 0) {
             return;
-        } else if (size() == 2) {
-            boolean change = rnd.nextInt(10) % 2 == 0 ? true : false;
-            if (change) {
+        } else {
+            Random random = new Random();
+
+            Node<T> prevRandom = getNode(newPosition - 1);
+            Node<T> curRandom = prevRandom.getNext();
+            Node<T> newHead;
+            if (size() < 2) {
+                return;
+            } else if (size() == 2) {
                 tail.setNext(head);
                 head.setNext(null);
                 newHead = tail;
                 tail = head;
                 head = newHead;
             } else {
-                return;
+                if (newPosition == 1) { //Если элемент следующий:
+                    head.setNext(curRandom.getNext());
+                    curRandom.setNext(head);
+                } else if (newPosition == size() - 1) { //Если рандомный элемент - хвост:
+                    curRandom.setNext(head.getNext());
+                    prevRandom.setNext(head);
+                    head.setNext(null);
+                    tail = head;
+                } else { //Если элемент не следующий и не хвост
+                    prevRandom.setNext(curRandom.getNext());
+                    curRandom.setNext(head.getNext());
+                    head.setNext(prevRandom.getNext());
+                    prevRandom.setNext(head);
+                }
+                head = curRandom;
             }
-        } else {
-            if (randomIndex == 1) { //Если элемент следующий:
-                head.setNext(curRandom.getNext());
-                curRandom.setNext(head);
-            } else if (randomIndex == size() - 1) { //Если рандомный элемент - хвост:
-                curRandom.setNext(head.getNext());
-                prevRandom.setNext(head);
-                head.setNext(null);
-                tail = head;
-            } else { //Если элемент не следующий и не хвост
-                prevRandom.setNext(curRandom.getNext());
-                curRandom.setNext(head.getNext());
-                head.setNext(prevRandom.getNext());
-                prevRandom.setNext(head);
-            }
-            head = curRandom;
         }
     }
-    private void pushElement(int position) {
-        Random rnd = new Random();
 
-        int randomIndex = rnd.nextInt(size() - position - 1) + position + 1;
-
-        Node<T> prevRandom = getNode(randomIndex - 1);
-        Node<T> curRandom = prevRandom.getNext();
-        Node<T> prevNode = getNode(position - 1);
-        Node<T> curNode = prevNode.getNext();
-
-        if (randomIndex == size() - 1) { //Если надо менять хвост:
-            tail.setNext(curNode.getNext());
-            prevNode.setNext(tail);
-            prevRandom.setNext(curNode);
-            curNode.setNext(null);
-            tail = curNode;
-        } else if (randomIndex == position + 1) { // Если элементы соседние
-            prevNode.setNext(curRandom);
-            curNode.setNext(curRandom.getNext());
-            curRandom.setNext(curNode);
+    private void pushElement(int oldPosition, int newPosition) {
+        if (size() < 2) {
+            throw new IllegalArgumentException("list should be greater");
         } else {
-            prevRandom.setNext(curRandom.getNext());
-            curRandom.setNext(curNode.getNext());
-            prevNode.setNext(curRandom);
-            curNode.setNext(prevRandom.getNext());
-            prevRandom.setNext(curNode);
+            if (size() == 2) {
+                if (oldPosition < newPosition) {
+                    pushHead(newPosition);
+                } else {
+                    pushHead(oldPosition);
+                }
+            } else {
+                if (oldPosition == 0) {
+                    pushHead(newPosition);
+                } else if (newPosition == 0) {
+                    pushHead(oldPosition);
+                } else {
+                    Node<T> prevRandom = getNode(newPosition - 1);
+                    Node<T> curRandom = prevRandom.getNext();
+                    Node<T> prevNode = getNode(oldPosition - 1);
+                    Node<T> curNode = prevNode.getNext();
+
+                    if (newPosition == size() - 1 && oldPosition != newPosition - 1) { //Если надо менять хвост:
+                        tail.setNext(curNode.getNext());
+                        prevNode.setNext(tail);
+                        prevRandom.setNext(curNode);
+                        curNode.setNext(null);
+                        tail = curNode;
+                    } else if (newPosition == oldPosition + 1) { // Если элементы соседние
+                        prevNode.setNext(curRandom);
+                        curNode.setNext(curRandom.getNext());
+                        curRandom.setNext(curNode);
+                    } else {
+                        prevRandom.setNext(curRandom.getNext());
+                        curRandom.setNext(curNode.getNext());
+                        prevNode.setNext(curRandom);
+                        curNode.setNext(prevRandom.getNext());
+                        prevRandom.setNext(curNode);
+                    }
+                }
+            }
         }
     }
-    /*private void pushTail() {
-        Random rnd = new Random();
-
-        Node<T> prevTail = getNode(size() - 2);
-
-        int randomIndex = rnd.nextInt(size());
-        if (randomIndex == 0) {
-            Node<T> newTail;
-            tail.setNext(head.getNext());
-            prevTail.setNext(head);
-            head.setNext(null);
-            newTail = head;
-            head = tail;
-            tail = newTail;
-        } else {
-            Node<T> prevRandom = getNode(randomIndex - 1);
-            Node<T> curRandom = prevRandom.getNext();
-            tail.setNext(curRandom.getNext());
-            prevRandom.setNext(tail);
-            prevTail.setNext(curRandom);
-            tail = curRandom;
-        }
-    }*/
     public void mixRandomly() {
-        pushHead();
-        for (int i = 1; i < size() - 2; i++) {
-            pushElement(i);
+        Random rnd = new Random();
+
+        for (int i = 0; i < size(); i++) {
+            int randomIndex = rnd.nextInt(size());
+            if (i != randomIndex) {
+                pushElement(i, randomIndex);
+            }
         }
     }
 
