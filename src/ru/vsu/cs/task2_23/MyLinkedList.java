@@ -147,78 +147,76 @@ public class MyLinkedList<T> implements Iterable<T> {
         }
     }*/
 
-    private void pushHead() {
-        Random rnd = new Random();
-
-        int randomIndex = rnd.nextInt(size() - 1) + 1;
-        Node<T> prevRandom = getNode(randomIndex - 1);
-        Node<T> curRandom = prevRandom.getNext();
-        Node<T> newHead, newTail;
-        if (size() < 2) {
+    private void pushHead(int newPosition) {
+        if (newPosition == 0) {
             return;
-        } else if (size() == 2) {
-            boolean change = rnd.nextInt(10) % 2 == 0 ? true : false;
-            if (change) {
+        } else {
+            Random random = new Random();
+
+            Node<T> prevRandom = getNode(newPosition - 1);
+            Node<T> curRandom = prevRandom.getNext();
+            Node<T> newHead;
+            if (size() < 2) {
+                return;
+            } else if (size() == 2) {
                 tail.setNext(head);
                 head.setNext(null);
                 newHead = tail;
                 tail = head;
                 head = newHead;
             } else {
-                return;
+                if (newPosition == 1) { //Если элемент следующий:
+                    head.setNext(curRandom.getNext());
+                    curRandom.setNext(head);
+                } else if (newPosition == size() - 1) { //Если рандомный элемент - хвост:
+                    curRandom.setNext(head.getNext());
+                    prevRandom.setNext(head);
+                    head.setNext(null);
+                    tail = head;
+                } else { //Если элемент не следующий и не хвост
+                    prevRandom.setNext(curRandom.getNext());
+                    curRandom.setNext(head.getNext());
+                    head.setNext(prevRandom.getNext());
+                    prevRandom.setNext(head);
+                }
+                head = curRandom;
             }
-        } else {
-            if (randomIndex == 1) { //Если элемент следующий:
-                head.setNext(curRandom.getNext());
-                curRandom.setNext(head);
-            } else if (randomIndex == size() - 1) { //Если рандомный элемент - хвост:
-                curRandom.setNext(head.getNext());
-                prevRandom.setNext(head);
-                head.setNext(null);
-                tail = head;
-            } else { //Если элемент не следующий и не хвост
-                prevRandom.setNext(curRandom.getNext());
-                curRandom.setNext(head.getNext());
-                head.setNext(prevRandom.getNext());
-                prevRandom.setNext(head);
-            }
-            head = curRandom;
         }
     }
-    private void pushElement(int position) {
-        Random rnd = new Random();
-        boolean shouldSwap = rnd.nextInt(10) % 2 == 0;
-        Node<T> newHead, newTail; // Для работы с head и tail.
+    private void pushElement(int oldPosition, int newPosition) {
         if (size() < 2) {
             return;
         } else if (size() == 2) {
-            if (shouldSwap) {
-                tail.setNext(head);
-                head.setNext(null);
-                newHead = tail;
-                tail = head;
-                head = newHead;
-            }
-        } else {
-            if (shouldSwap) {
-                if (position == 0) {
-                    pushHead();
+            if (oldPosition == 0) {
+                if (newPosition == oldPosition) {
+                    return;
                 } else {
-                    int randomIndex = rnd.nextInt(size() - position - 1) + position + 1;
+                    pushHead(newPosition);
+                }
+            } else {
 
-                    Node<T> prevRandom = getNode(randomIndex - 1);
+            }
+            pushHead(newPosition);
+        } else { //если хотя бы 3 элемента
+            if (oldPosition == 0) { //если начинаем с головы
+                ;
+            } else {
+                if (newPosition == 0) {
+                    pushHead(oldPosition);
+                } else {
+
+                    Node<T> prevRandom = getNode(newPosition - 1);
                     Node<T> curRandom = prevRandom.getNext();
-                    Node<T> prevNode = getNode(position - 1);
+                    Node<T> prevNode = getNode(oldPosition - 1);
                     Node<T> curNode = prevNode.getNext();
 
-
-                    if (randomIndex == size() - 1 && position != randomIndex - 1) { //Если надо менять хвост:
+                    if (newPosition == size() - 1 && oldPosition != newPosition - 1) { //Если надо менять хвост:
                         tail.setNext(curNode.getNext());
                         prevNode.setNext(tail);
                         prevRandom.setNext(curNode);
                         curNode.setNext(null);
                         tail = curNode;
-                    } else if (randomIndex == position + 1) { // Если элементы соседние
+                    } else if (newPosition == oldPosition + 1) { // Если элементы соседние
                         prevNode.setNext(curRandom);
                         curNode.setNext(curRandom.getNext());
                         curRandom.setNext(curNode);
@@ -234,8 +232,11 @@ public class MyLinkedList<T> implements Iterable<T> {
         }
     }
     public void mixRandomly() {
-        for (int i = 0; i < size() - 1; i++) {
-            pushElement(i);
+        Random rnd = new Random();
+
+        for (int i = 0; i < size(); i++) {
+            int randomIndex = rnd.nextInt(size());
+            pushElement(i, randomIndex);
         }
     }
 
