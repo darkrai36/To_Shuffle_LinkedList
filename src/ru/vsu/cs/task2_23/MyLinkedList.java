@@ -237,7 +237,9 @@ public class MyLinkedList<T> implements Iterable<T> {
 
         for (int i = 0; i < size(); i++) {
             int randomIndex = rnd.nextInt(size());
-            if (i != randomIndex) {
+            if (i > randomIndex) {
+                pushElement(randomIndex, i);
+            } else if (i < randomIndex) {
                 pushElement(i, randomIndex);
             }
         }
