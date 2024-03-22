@@ -53,6 +53,7 @@ public class MyLinkedList<T> implements Iterable<T> {
         head = n;
         size++;
     }
+
     public void addLast(T value) {
         if (isEmpty()) {
             addFirst(value);
@@ -75,6 +76,7 @@ public class MyLinkedList<T> implements Iterable<T> {
             q.setNext(n);
         }
     }
+
     public void removeFirst() {
         if (isEmpty()) {
             throw new NullPointerException("List is empty.");
@@ -82,15 +84,19 @@ public class MyLinkedList<T> implements Iterable<T> {
         head = head.getNext();
         size--;
     }
+
     public int size() {
         return size;
     }
+
     public boolean isEmpty() {
         return (size() == 0);
     }
+
     public T get(int index) {
         return getNode(index).getValue();
     }
+
     private Node<T> getNode(int index) {
         if (index < 0) {
             throw new IndexOutOfBoundsException("Index must be greater or equal 0");
@@ -183,28 +189,23 @@ public class MyLinkedList<T> implements Iterable<T> {
             }
         }
     }
+
     private void pushElement(int oldPosition, int newPosition) {
         if (size() < 2) {
-            return;
-        } else if (size() == 2) {
-            if (oldPosition == 0) {
-                if (newPosition == oldPosition) {
-                    return;
-                } else {
+            throw new IllegalArgumentException("list should be greater");
+        } else {
+            if (size() == 2) {
+                if (oldPosition < newPosition) {
                     pushHead(newPosition);
+                } else {
+                    pushHead(oldPosition);
                 }
             } else {
-
-            }
-            pushHead(newPosition);
-        } else { //если хотя бы 3 элемента
-            if (oldPosition == 0) { //если начинаем с головы
-                ;
-            } else {
-                if (newPosition == 0) {
+                if (oldPosition == 0) {
+                    pushHead(newPosition);
+                } else if (newPosition == 0) {
                     pushHead(oldPosition);
                 } else {
-
                     Node<T> prevRandom = getNode(newPosition - 1);
                     Node<T> curRandom = prevRandom.getNext();
                     Node<T> prevNode = getNode(oldPosition - 1);
@@ -236,7 +237,9 @@ public class MyLinkedList<T> implements Iterable<T> {
 
         for (int i = 0; i < size(); i++) {
             int randomIndex = rnd.nextInt(size());
-            pushElement(i, randomIndex);
+            if (i != randomIndex) {
+                pushElement(i, randomIndex);
+            }
         }
     }
 
